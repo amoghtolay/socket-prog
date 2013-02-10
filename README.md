@@ -1,0 +1,1 @@
+This is part of a networks lab assignment. Learning about socket programming, and implementing a calendar service which supports certain message passing based on a protocol. The server has multiple modes of operation: multiple connections, single connection and selection of connection based on select()
