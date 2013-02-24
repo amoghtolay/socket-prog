@@ -6,6 +6,10 @@
 #include <sstream>
 #include <vector>
 #include <time.h>
+#include <sys/types.h>
+#include <dirent.h>
+
+#define FOLDER_NAME "./calendar/"
 
 using namespace std;
 /*
@@ -28,7 +32,7 @@ using namespace std;
  * 	  which calls the server automatically
  * 4. Include error handling like putting char instead of int in date
  * 5. Change update func to avoid duplicate updates
- * 6. Remove all expired events from all users function
+ * 6. Remove all expired events from all users function - IMP
  ***********************************************************************
  */
 // All helper functions here
@@ -128,7 +132,57 @@ int removeEmptyFile ( string fileName )
 	}
 	return 0;
 }
+int removeAllExpired ( )
+{
+	DIR *dirp = opendir(FOLDER_NAME);
+	struct dirent *dp;
+	bool isRemoved = false;
+	while ( (dp = readdir(dirp) ) != NULL ){
+		if ( !strcmp(".", dp->d_name) || !strcmp("..", dp->d_name) )
+			continue;
+		fstream fpCal;
+		cout<<dp->d_name;
+		stringstream ss;
+		ss << dp->d_name;
+		string fileName = FOLDER_NAME + ss.str();
 		
+		fpCal.open( strdup(fileName.c_str()), fstream::in | fstream::out );
+		if (!fpCal.is_open()){
+			cout<<"ERROR: Could not open the user's file HERE\n";
+			return (1);
+		}
+		stringstream st;
+		time_t timeNow = time (NULL);
+		st << timeNow;
+		string curTime = st.str();
+		string oneLine;
+		
+		int pos = fpCal.tellg();
+		while ( getline (fpCal,oneLine) ){
+			cout<<pos<<"\n";
+			if ( oneLine.find(" ") == 0 ){
+				pos = fpCal.tellg();
+				continue;
+			}
+			vector<std::string> splitLine;
+			splitLine = parse( oneLine );
+			if ( ( splitLine[1] >= curTime ) ){
+				pos = fpCal.tellg();
+				continue;
+			}
+			else if ( splitLine[1] < curTime ){
+				oneLine.replace ( oneLine.begin(), oneLine.end(), oneLine.length(), ' ' );
+				fpCal.seekg(pos);
+				fpCal<<oneLine;
+				isRemoved = true;
+				cout<<"REMOVING\n";
+			}
+		}
+	}
+	
+	(void)closedir(dirp);
+	return (!isRemoved);
+}
 
 /*
  * The following 4 functions, add, remove, update or get data from the
@@ -296,8 +350,9 @@ void execQuery( string query )
 	// Remove the username from the query, now just the operator 
 	// and its operands remain
 	splitQuery.erase (splitQuery.begin());
-	string fileName = "calendar_"+username;
+	string fileName = FOLDER_NAME + ( "calendar_" + username );
 	
+	removeAllExpired();
 	string operation = splitQuery.front();
 	int result = -1;
 	if ( !operation.compare("add") )
