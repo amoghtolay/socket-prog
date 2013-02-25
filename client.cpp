@@ -52,14 +52,17 @@ int main(int argc, char *argv[])
 	for (int i=3; i<argc; i++){
 		stringstream ss;
 		ss<<argv[i];
-		query = query + " " + ss.str();
+		if ( i == 3 )
+			query = ss.str();
+		else
+			query = query + " " + ss.str();
 	}
+	cout<<"Printing from client"<<query<<"\n";
 	strcpy ( buffer , query.c_str() );
 	n = write(sockfd,buffer,strlen(buffer));
 	if (n < 0) 
 		error("ERROR writing to socket");
 	bzero(buffer,256);
-	
 	n = read(sockfd,buffer,255);
 	if (n < 0) 
 		error("ERROR reading from socket");

@@ -2,7 +2,7 @@
    The port number is passed as an argument */
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <cstring>
 #include <unistd.h>
 #include <sys/types.h> 
 #include <sys/socket.h>
@@ -54,9 +54,16 @@ int main(int argc, char *argv[])
 	 * At this point, buffer contains the entire query. Now, call the
 	 * execQuery function on this buffer
 	 */
+	stringstream convert;
+	convert << buffer;
+	string query = convert.str();
 	
-	printf("Here is the message: %s\n",buffer);
-	n = write(newsockfd,"I got your message",18);
+	string output = execQuery(query);
+	
+	char writeOut[256];
+	bzero(writeOut,256);
+	strcpy ( writeOut , output.c_str() );
+	n = write(newsockfd,writeOut,strlen(writeOut));
 	/*
 	 * Now write the output that comes from execQuery
 	 */

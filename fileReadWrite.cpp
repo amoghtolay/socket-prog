@@ -193,18 +193,19 @@ int removeAllExpired ( )
  * remaining query after filename.
  */
 
-int addEvent ( string fileName, vector<std::string> operation )
+string addEvent ( string fileName, vector<std::string> operation )
 {
+	string returnString = "";
 	int delResult = removeEmptyFile ( fileName );
 	if (delResult){
-		cout<<"Could not delete empty file of user\n";
-		return 16;
+		returnString = "Could not delete empty file of user\n";
+		return returnString;
 	}
 	ofstream fpCal;
 	fpCal.open( strdup(fileName.c_str()), ios::app );
 	if (!fpCal.is_open()){
-		cout<<"ERROR: Could not open the user's file\n";
-		return (1);
+		returnString = "ERROR: Could not open the user's file\n";
+		return returnString;
 	}
 	/*
 	 * operation[0] contains add. operation[1] contains date.
@@ -212,45 +213,47 @@ int addEvent ( string fileName, vector<std::string> operation )
 	 * operation[4] contains event name
 	 */
 	if (operation.size() != 5 ){
-		cout<<"Number of arguments is wrong. Usage is username add  date time1 time2 name\n";
-		return (10);
+		returnString = "Number of arguments is wrong. Usage is username add  date time1 time2 name\n";
+		return returnString;
 	}
 	if ( !(dateToEpoch( operation[1], operation[2] ).compare("ERROR") &&
 		dateToEpoch( operation[1], operation[3] ).compare("ERROR")) ){
-			cout<<"ERROR: The time and date should be in the future and of valid format\n";
-			return (2);
+			returnString = "ERROR: The time and date should be in the future and of valid format\n";
+			return (returnString);
 	}
 	string startTimestamp = dateToEpoch( operation[1], operation[2] );
 	string endTimestamp = dateToEpoch( operation[1], operation[3] );
 	string entryToWrite = startTimestamp + " " + endTimestamp + " " + operation[4] + "\n";
 	if ( atoi(startTimestamp.c_str()) > atoi(endTimestamp.c_str()) ){
-		cout<<"ERROR: End time of event should be same or after start time\n";
-		return (3);
+		returnString = "ERROR: End time of event should be same or after start time\n";
+		return (returnString);
 	}
 	/*
 	 * Now check for clashes with other events
 	 */
 	bool isClashing = isClash ( startTimestamp, endTimestamp, fileName );
 	if ( isClashing ){
-		cout<<"This event clashes with another event.\n";
-		return (5);
+		returnString = "This event clashes with another event.\n";
+		return (returnString);
 	}
 	fpCal<<entryToWrite;
 	fpCal.close();
-	return (0);
+	returnString = "The event was successfully added. Query successful.\n";
+	return (returnString);
 }
-int removeEvent ( string fileName, vector<std::string> operation )
+string removeEvent ( string fileName, vector<std::string> operation )
 {
+	string returnString = "";
 	if ( !isFileExists(fileName) ){
-		cout<<"ERROR: User's file doesn't exist.";
-		return (4);
+		returnString = returnString + "ERROR: User's file doesn't exist.";
+		return (returnString);
 	}
 	fstream fpCal;
 	fpCal.open( strdup(fileName.c_str()), fstream::in | fstream::out );
 	string startTimestamp = dateToEpoch ( operation[1], operation[2] );
 	if (operation.size() < 3){
-		cout<<"Number of arguments is wrong. Usage is username remove  date time1\n";
-		return (10);
+		returnString = returnString + "Number of arguments is wrong. Usage is username remove  date time1\n";
+		return (returnString);
 	}
 	string oneLine;
 	int pos = fpCal.tellg();
@@ -277,73 +280,80 @@ int removeEvent ( string fileName, vector<std::string> operation )
 	fpCal.close();
 	int delResult = removeEmptyFile ( fileName );
 	if (delResult){
-		cout<<"Could not delete empty file of user\n";
-		return 16;
+		returnString = returnString + "Could not delete empty file of user\n";
+		return returnString;
 	}
 	if (isRemoved){
-		cout<<"Event removed.\n";
-		return (0);
+		returnString = returnString + "Event successfully removed.\n";
+		return (returnString);
 	}
-	else
-		return (6);
+	else{
+		returnString = returnString + "Event could not be removed. Please check query and try again.\n";
+		return (returnString);
+	}
 }
-int getEvent ( string fileName, vector<std::string> operation )
+string getEvent ( string fileName, vector<std::string> operation )
 {
+	string returnString = "";
 	int delResult = removeEmptyFile ( fileName );
 	if (delResult){
-		cout<<"Could not delete empty file of user\n";
-		return 16;
+		returnString = returnString + "Could not delete empty file of user\n";
+		return returnString;
 	}
 	if ( !isFileExists(fileName) ){
-		cout<<"ERROR: User's file doesn't exist.";
-		return (4);
+		returnString = returnString + "ERROR: User's file doesn't exist.";
+		return (returnString);
 	}
 	ifstream fpCal;
 	fpCal.open( strdup(fileName.c_str()) );
 	
 	fpCal.close();
-	return (0);
+	return (returnString);
 }
-int updateEvent ( string fileName, vector<std::string> operation )
+string updateEvent ( string fileName, vector<std::string> operation )
 {
+	string returnString = "";
 	int delResult = removeEmptyFile ( fileName );
 	if (delResult){
-		cout<<"Could not delete empty file of user\n";
-		return 16;
+		returnString = returnString + "Could not delete empty file of user\n";
+		return returnString;
 	}
 	if ( !isFileExists(fileName) ){
-		cout<<"ERROR: User's file doesn't exist.";
-		return (4);
+		returnString = returnString + "ERROR: User's file doesn't exist.";
+		return (returnString);
 	}
 	fstream fpCal;
 	fpCal.open( strdup(fileName.c_str()), fstream::in | fstream::out );
 	if (operation.size() != 5 ){
-		cout<<"Number of arguments is wrong. Usage is username update  date time1 time2 name\n";
-		return (10);
+		returnString = returnString + "Number of arguments is wrong. Usage is username update  date time1 time2 name\n";
+		return (returnString);
 	}
-	int resultRemove = removeEvent( fileName, operation );
-	cout<<resultRemove;
-	if (!resultRemove){
-		int resultAdd = addEvent ( fileName, operation );
-		if (resultAdd){
-			cout<<"Could not update file as adding event failed\n";
-			return (8);
+	string resultRemove = removeEvent( fileName, operation );
+	if (resultRemove == "Event successfully removed.\n"){
+		string resultAdd = addEvent ( fileName, operation );
+		if (resultAdd == "The event was successfully added. Query successful.\n"){
+			returnString = resultRemove + resultAdd + "This event successfuly updated\n";
+			return (returnString);
+		}
+		else{
+			returnString = returnString + resultRemove + resultAdd + "Could not update event as adding this event failed\n";
 		}
 	}
 	else {
-		cout<<"Entry does not exist, so cannot be updated\n";
-		return (7);
+		returnString = returnString + "Entry does not exist, so cannot be updated\n";
+		return (returnString);
 	}
 	fpCal.close();
-	return (0);
+	return (returnString);
 }
 
 /*
  * This is the function that takes in the entire query and splits the
  * query and appropriately calls required operator function
  */
-void execQuery( string query )
+string execQuery( string query )
 {
+	cout<<query<<"\n";
 	vector<std::string> splitQuery;
 	splitQuery = parse( query );
 	string username = splitQuery.front();
@@ -354,7 +364,7 @@ void execQuery( string query )
 	
 	removeAllExpired();
 	string operation = splitQuery.front();
-	int result = -1;
+	string result = "-1";
 	if ( !operation.compare("add") )
 		result = addEvent( fileName, splitQuery );
 	if ( !operation.compare("remove") )
@@ -364,13 +374,10 @@ void execQuery( string query )
 	if ( !operation.compare("get"))
 		result = getEvent( fileName, splitQuery );
 	
-	if ( result == -1 ){
-		cout<<"Failed to modify your calendar: Invalid operation specified.\nOnly 'add', 'remove', 'update' and 'get' are supported";
+	if ( result == "-1" ){
+		result = "Failed to modify your calendar: Invalid operation specified.\nOnly 'add', 'remove', 'update' and 'get' are supported\n";
 	}
-	if (!result)
-		cout<<"Operation completed successfully\n";
-	else
-		cout<<"\nOperation FAILED. Recheck query and try again.\n";
+	return (result);
 }
 /*
 int main()
