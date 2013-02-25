@@ -10,6 +10,8 @@
 #include <sys/types.h> 
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <iostream>
+using namespace std;
 
 void dostuff(int); /* function prototype */
 void error(const char *msg)

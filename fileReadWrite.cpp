@@ -372,7 +372,7 @@ void execQuery( string query )
 	else
 		cout<<"\nOperation FAILED. Recheck query and try again.\n";
 }
-
+/*
 int main()
 {
 	string query;
@@ -380,3 +380,4 @@ int main()
 	execQuery( query );
 	return (EXIT_SUCCESS);
 }
+*/
