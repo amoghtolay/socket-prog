@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 	struct sockaddr_in serv_addr;
 	struct hostent *server;
 
-	char buffer[256];
+	char buffer[2560];
 	if (argc < 4) {
 		cout<<"Usage: "<<argv[0]<<" <hostname> <port> <command>\n";
 		exit(0);
@@ -44,8 +44,8 @@ int main(int argc, char *argv[])
 		error("ERROR connecting");
 	/*
 	printf("Please enter the message: ");
-	bzero(buffer,256);
-	fgets(buffer,255,stdin);
+	bzero(buffer,2560);
+	fgets(buffer,2559,stdin);
 	*/
 	// Adding my code here to read from the main arguments itself:
 	string query = "";
@@ -57,13 +57,12 @@ int main(int argc, char *argv[])
 		else
 			query = query + " " + ss.str();
 	}
-	cout<<"Printing from client"<<query<<"\n";
 	strcpy ( buffer , query.c_str() );
 	n = write(sockfd,buffer,strlen(buffer));
 	if (n < 0) 
 		error("ERROR writing to socket");
-	bzero(buffer,256);
-	n = read(sockfd,buffer,255);
+	bzero(buffer,2560);
+	n = read(sockfd,buffer,2559);
 	if (n < 0) 
 		error("ERROR reading from socket");
 	printf("%s\n",buffer);
