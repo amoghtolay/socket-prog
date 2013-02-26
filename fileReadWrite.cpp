@@ -454,7 +454,14 @@ string updateEvent ( string fileName, vector<std::string> operation )
 	fpCal.close();
 	return (returnString);
 }
-
+/*
+string getLine ( string fileName, int lineNum )
+{
+}
+string totalLines ( string fileName )
+{
+}
+*/
 /*
  * This is the function that takes in the entire query and splits the
  * query and appropriately calls required operator function
