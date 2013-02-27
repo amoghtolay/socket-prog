@@ -18,6 +18,7 @@
 #include <sstream>
 #include "fileReadWrite.h"
 #include <signal.h>
+#include "returnCodes.h"
 
 using namespace std;
 
@@ -28,8 +29,16 @@ void error(const char *msg)
 	exit(1);
 }
 
+void intHandler(int waste=1) {
+    error("\nThe user pressed Ctrl-C, so terminating...\n");
+}
 int main(int argc, char *argv[])
 {
+	/*
+	 * Handling Ctrl-C (SIGINT) to ensure that code
+	 * quits gracefully
+	 */
+	signal(SIGINT, intHandler);
 	int sockfd, newsockfd, portno, pid;
 	socklen_t clilen;
 	struct sockaddr_in serv_addr, cli_addr;
@@ -198,9 +207,28 @@ void queryHandling (int sock)
 	bzero(writeOut,2560);
 	strcpy ( writeOut , output.c_str() );
 	n = write(sock,writeOut,strlen(writeOut));
+	if (n < 0)
+		error("ERROR writing to socket");
 	/*
 	 * Now write the output that comes from execQuery
 	 */
-	if (n < 0)
-		error("ERROR writing to socket");
+	if ( string::npos != output.find(totalLines) ){
+		unsigned pos = output.find(" ");
+		int numLines = atoi(output.substr(0,pos).c_str());
+		for ( int i=1; i<=numLines; i++ ){
+			bzero(buffer,2560);
+			n = read(sock,buffer,2559);
+			stringstream convert;
+			convert << buffer;
+			string getLineQuery = convert.str();
+
+			string output = execQuery(getLineQuery);
+			bzero(writeOut,2560);
+			strcpy ( writeOut , output.c_str() );
+			n = write(sock,writeOut,strlen(writeOut));
+			if (n < 0)
+				error("ERROR writing to socket");
+			}
+			bzero(writeOut,2560);
+	}
 }

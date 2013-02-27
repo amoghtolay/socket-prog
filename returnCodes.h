@@ -22,6 +22,8 @@
 #define updateSuccess "This event successfuly updated\n"
 #define updateFailAdd "Could not update event as adding this event failed\n"
 #define updateFailNoExists "Entry does not exist, so cannot be updated\n"
+#define restoredEvent "Could not add event because of the above reason.\nThus, update failed and now restoring original event back\n"
+#define restoredEventFail "Could not add event because of the above reason.\n Could not restore event due to some reason\n"
 
 #define queryInvalid "Failed to modify your calendar: Invalid operation specified.\nOnly 'add', 'remove', 'update' , 'get' and 'getall' are supported\n"
 #define queryPass "Your query was successfully completed.\n"
@@ -36,6 +38,9 @@
 #define getLineSuccess "Event Number "
 #define getLineWrongLine "The client sent a request for getting an event that doesn't exist\n"
 #define wrongUsageGetLine "The client sent a wrong format of request to get the nth line.\n"
+#define wrongUsageGetAll "Wrong usage of getall. Usage is username getall\n"
+#define restoreSuccess "Restored original event\n"
+
 /*
  * Defining folder name to store all user files
  */

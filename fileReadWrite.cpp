@@ -246,6 +246,19 @@ string epochToDate ( string epochStr )
 
 	return returnDate;
 } 
+string addLine ( string fileName, string eventObtained )
+{
+	string returnString = "";
+	ofstream fpCal;
+	fpCal.open( strdup(fileName.c_str()), ios::app );
+	if (!fpCal.is_open()){
+		returnString = returnString + fopenError;
+		return returnString;
+	}
+	fpCal<<eventObtained;
+	fpCal.close();
+	return restoreSuccess;
+}
 /*
  * The following 4 functions, add, remove, update or get data from the
  * calendar. These are the only functions which ever deal with the file
@@ -436,6 +449,26 @@ string updateEvent ( string fileName, vector<std::string> operation )
 		returnString = returnString + wrongUsageUpdate;
 		return (returnString);
 	}
+	/*
+	 * Below code is to get event so that if the addition fails after
+	 * removing the event, we can add the original event back into the
+	 * calendar.
+	 */
+	string eventToUpdate;
+	string startTimestamp = dateToEpoch ( operation[1], operation[2] );
+	bool isExists = false;
+	while ( getline (fpCal,eventToUpdate) ){
+		if ( eventToUpdate.find(" ") == 0 )
+			continue;
+		vector<std::string> splitLine;
+		splitLine = parse( eventToUpdate );
+		if ( !( splitLine[0].compare(startTimestamp) ) ){
+			isExists = true;
+			eventToUpdate = eventToUpdate + "\n";
+			break;
+		}
+	}
+	
 	string resultRemove = removeEvent( fileName, operation );
 	if (resultRemove == removeSuccess){
 		string resultAdd = addEvent ( fileName, operation );
@@ -443,8 +476,12 @@ string updateEvent ( string fileName, vector<std::string> operation )
 			returnString = resultRemove + resultAdd + updateSuccess;
 			return (returnString);
 		}
-		else{
-			returnString = returnString + resultRemove + resultAdd + updateFailAdd;
+		else if ( isExists ){
+			string resultRestore = addLine ( fileName, eventToUpdate);
+			if ( resultRestore == restoreSuccess )
+				returnString = resultRemove + resultAdd + restoredEvent;
+			else
+				returnString = resultRemove + resultAdd + restoredEventFail;
 		}
 	}
 	else {
@@ -463,6 +500,7 @@ string findNumLines ( string fileName )
 		returnString = returnString + fopenError;
 		return returnString;
 	}
+
 	/*
 	 * Now count the number of lines here
 	 */
@@ -505,7 +543,9 @@ string getLine ( string fileName, vector<std::string> operation )
 		if ( oneLine.find(" ") == 0 )
 			continue;
 		if ( i == lineNum ){
-			returnString = returnString + oneLine;
+			vector<std::string> splitLine;
+			splitLine = parse( oneLine );
+			returnString = returnString + epochToDate ( splitLine[0] ) + " to " + epochToDate ( splitLine[1] ) + "\t" + splitLine[2];
 			break;
 		}
 		i++;
@@ -557,12 +597,3 @@ string execQuery( string query )
 		result = result + queryFail;
 	return (result);
 }
-/*
-int main()
-{
-	string query;
-	getline( cin, query );
-	execQuery( query );
-	return (EXIT_SUCCESS);
-}
-*/
