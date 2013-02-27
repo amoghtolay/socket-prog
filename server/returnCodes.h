@@ -2,6 +2,11 @@
  * Return string macros are defined in this file. 
  * This is used to pass the messages between user and server
  **********************************************************************/
+/*
+ * Defining folder name to store all user files
+ */
+#define FOLDER_NAME "./calendar/"
+
 
 // Macros for function addEvent()
 
@@ -11,12 +16,12 @@
 #define dateErrorPast "ERROR: The time and date should be in the future and of valid format\n"
 #define dateErrorDuration "ERROR: End time of event should be same or after start time\n"
 #define clashError "This event clashes with another event.\n"
-#define addSuccess "The event was successfully added. Query successful.\n"
+#define addSuccess "The event was successfully added.\n"
 
 #define noExistError "ERROR: User's file doesn't exist."
 #define wrongUsageRemove "Number of arguments is wrong. Usage is username remove  date time1\n"
 #define removeSuccess "Event successfully removed.\n"
-#define removeFail "Event could not be removed. Please check query and try again.\n"
+#define removeFail "Error: Event could not be removed.\n"
 
 #define wrongUsageUpdate "Number of arguments is wrong. Usage is username update  date time1 time2 name\n"
 #define updateSuccess "This event successfuly updated\n"
@@ -41,8 +46,3 @@
 #define wrongUsageGetLine "The client sent a wrong format of request to get the nth line.\n"
 #define wrongUsageGetAll "Wrong usage of getall. Usage is username getall\n"
 #define restoreSuccess "Restored original event\n"
-
-/*
- * Defining folder name to store all user files
- */
-#define FOLDER_NAME "./calendar/"

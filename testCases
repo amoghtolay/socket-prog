@@ -1,20 +1,28 @@
-./client localhost 7000 steve add 031513 0900 1100 Test1
-./client localhost 7000 steve add 031513 1300 1400 Meeting1
-./client localhost 7000 steve add 031513 1600 1830 Class
-./client localhost 7000 steve add 031613 0800 0930 Dentist
-./client localhost 7000 steve update 031613 0800 1000 Dentist
-./client localhost 7000 steve get 031513
-./client localhost 7000 steve get 031513 0900
-./client localhost 7000 steve add 031513 0800 0930 CompilersFAIL #FAIL
-./client localhost 7000 steve update 031513 0900 1330 Test1FAIL
-./client localhost 7000 steve getall
+All these queries are executed in order, if the order is changed, result
+might be different
 
-./client localhost 7000 tim add 031513 1500 1630 Class 
-./client localhost 7000 tim add 031613 1500 1530 Seminar 
-./client localhost 7000 tim add 031513 1430 1530 Gym 
-./client localhost 7000 tim remove 031513 1500 
-./client localhost 7000 tim add 031713 0900 1200 Squash 
-./client localhost 7000 tim get 031613 1500 
-./client localhost 7000 martin add 031713 0900 1130 Shopping 
-./client localhost 7000 martin update 031713 0800 1130 Shopping 
-./client localhost 7000 martin get 031713 0800 
+Query should be successful in these cases:
+
+./client localhost 7000 amogh add 031513 0900 1100 Test1
+./client localhost 7000 amogh add 031513 1300 1400 Meeting1
+./client localhost 7000 amogh add 031513 1600 1830 Class
+./client localhost 7000 amogh add 031613 0800 0930 Hospital
+./client localhost 7000 amogh add 031513 1400 1500 NetworksClass
+./client localhost 7000 amogh add 031613 1500 1600 Birthday
+./client localhost 7000 amogh update 031613 0800 1000 ENT
+./client localhost 7000 amogh get 031513
+./client localhost 7000 amogh get 031513 0900
+./client localhost 7000 amogh getall
+./client localhost 7000 amogh remove 031513 0900
+./client localhost 7000 amogh add 031513 0800 0930 Compilers
+
+Query should fail in the following case:
+
+./client localhost 7000 amogh add 031513 0800 0930 LectureClash
+./client localhost 7000 amogh update 031713 0800 0830 Update
+./client localhost 7000 amogh add 021713 0800 0900 pastDate
+./client localhost 7000 amogh add 031713 0900 0800 durationNegative
+./client localhost 7000 amogh remove 031513 0900
+./client localhost 7000 amogh update 031513 1600 1830 Class
+
+Any other cases can be checked.

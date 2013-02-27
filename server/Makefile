@@ -1,0 +1,8 @@
+all:
+	g++ -Wall serverAllModes.cpp fileReadWrite.cpp -o serverAllModes 
+
+# Used for cleaning all user files - DONOT use in between testing
+# Also deletes all executable files
+clean:
+	rm -f ./calendar/*
+	rm -f ./serverSingle serverAllModes serverMultiThread
