@@ -160,6 +160,8 @@ bool isClash ( string startTimestamp, string endTimestamp, string fileName )
 			return true;
 		if ( splitLine[1] > startTimestamp && splitLine[1] <= endTimestamp )
 			return true;
+		if ( splitLine[0] < startTimestamp && splitLine[1] >= endTimestamp )
+			return true;
 	}
 	return false;
 }
@@ -456,7 +458,11 @@ string updateEvent ( string fileName, vector<std::string> operation )
 	 */
 	string eventToUpdate;
 	string startTimestamp = dateToEpoch ( operation[1], operation[2] );
+	string endTimestamp = dateToEpoch ( operation[1], operation[3] );
+	string updatedEventName = operation[4];
+	
 	bool isExists = false;
+	bool exactMatch = false;
 	while ( getline (fpCal,eventToUpdate) ){
 		if ( eventToUpdate.find(" ") == 0 )
 			continue;
@@ -465,10 +471,15 @@ string updateEvent ( string fileName, vector<std::string> operation )
 		if ( !( splitLine[0].compare(startTimestamp) ) ){
 			isExists = true;
 			eventToUpdate = eventToUpdate + "\n";
+			if ( !(splitLine[1].compare(endTimestamp)) && !(splitLine[3].compare(updatedEventName)) )
+				exactMatch = true; 
 			break;
 		}
 	}
-	
+	if ( exactMatch ){
+		returnString = returnString + exactMatchingUpdate;
+		return returnString;
+	}
 	string resultRemove = removeEvent( fileName, operation );
 	if (resultRemove == removeSuccess){
 		string resultAdd = addEvent ( fileName, operation );

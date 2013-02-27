@@ -24,13 +24,14 @@
 #define updateFailNoExists "Entry does not exist, so cannot be updated\n"
 #define restoredEvent "Could not add event because of the above reason.\nThus, update failed and now restoring original event back\n"
 #define restoredEventFail "Could not add event because of the above reason.\n Could not restore event due to some reason\n"
+#define exactMatchingUpdate "This exact event already exists, so no update done.\n"
 
 #define queryInvalid "Failed to modify your calendar: Invalid operation specified.\nOnly 'add', 'remove', 'update' , 'get' and 'getall' are supported\n"
 #define queryPass "Your query was successfully completed.\n"
 #define queryFail "Your operation could not be completed because of the error described above ^.\n Please check and try again.\n"
 
 #define wrongUsageGet "ERROR: Invalid query. Usage is either of the two forms:\n1. username get eventDate\n2. username get eventDate eventStartTime\n"
-#define getSuccess "The event is as shown above\n"
+#define getSuccess "The event(s) is(are) as shown above\n"
 #define getFail "Your request to get the events has failed\n"
 #define getNoEntry "There is no entry corresponding to this date and time\n"
 

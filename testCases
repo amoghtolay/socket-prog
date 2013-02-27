@@ -1,0 +1,20 @@
+./client localhost 7000 steve add 031513 0900 1100 Test1
+./client localhost 7000 steve add 031513 1300 1400 Meeting1
+./client localhost 7000 steve add 031513 1600 1830 Class
+./client localhost 7000 steve add 031613 0800 0930 Dentist
+./client localhost 7000 steve update 031613 0800 1000 Dentist
+./client localhost 7000 steve get 031513
+./client localhost 7000 steve get 031513 0900
+./client localhost 7000 steve add 031513 0800 0930 CompilersFAIL #FAIL
+./client localhost 7000 steve update 031513 0900 1330 Test1FAIL
+./client localhost 7000 steve getall
+
+./client localhost 7000 tim add 031513 1500 1630 Class 
+./client localhost 7000 tim add 031613 1500 1530 Seminar 
+./client localhost 7000 tim add 031513 1430 1530 Gym 
+./client localhost 7000 tim remove 031513 1500 
+./client localhost 7000 tim add 031713 0900 1200 Squash 
+./client localhost 7000 tim get 031613 1500 
+./client localhost 7000 martin add 031713 0900 1130 Shopping 
+./client localhost 7000 martin update 031713 0800 1130 Shopping 
+./client localhost 7000 martin get 031713 0800 

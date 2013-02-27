@@ -159,7 +159,7 @@ int main(int argc, char *argv[])
 								char writeOut[2560];
 								bzero(writeOut,2560);
 								strcpy ( writeOut , output.c_str() );
-								int n = write(newsockfd,writeOut,strlen(writeOut));
+								int n = write(i,writeOut,strlen(writeOut));
 								/*
 								 * Now write the output that comes from execQuery
 								 */
