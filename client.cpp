@@ -8,6 +8,8 @@
 #include <netdb.h> 
 #include <iostream>
 #include <sstream>
+#include "returnCodes.h"
+#include <unistd.h>
 
 using namespace std;
 void error(const char *msg)
@@ -42,18 +44,16 @@ int main(int argc, char *argv[])
 	serv_addr.sin_port = htons(portno);
 	if ( connect (sockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0) 
 		error("ERROR connecting");
-	/*
-	printf("Please enter the message: ");
-	bzero(buffer,2560);
-	fgets(buffer,2559,stdin);
-	*/
 	// Adding my code here to read from the main arguments itself:
 	string query = "";
+	string username;
 	for (int i=3; i<argc; i++){
 		stringstream ss;
 		ss<<argv[i];
-		if ( i == 3 )
+		if ( i == 3 ){
 			query = ss.str();
+			username = ss.str();
+		}
 		else
 			query = query + " " + ss.str();
 	}
@@ -65,7 +65,38 @@ int main(int argc, char *argv[])
 	n = read(sockfd,buffer,2559);
 	if (n < 0) 
 		error("ERROR reading from socket");
-	printf("%s\n",buffer);
+	/*
+	 * Output from the server comes here. Check if it returns the num
+	 * of lines appended with n
+	 */
+	string outputReturned;
+	stringstream ss;
+	ss<<buffer;
+	outputReturned = ss.str();
+	bool flagGetAll = false;
+	if ( string::npos != outputReturned.find(totalLines) ){
+		unsigned pos = outputReturned.find(" ");
+		int numLines = atoi(outputReturned.substr(0,pos).c_str());
+		for ( int i = 1; i<=numLines; i++ ){
+			sleep(2);
+			bzero(buffer,2560);
+			stringstream convert;
+			convert<<i;
+			string getLineString = username + " getLine " + convert.str();
+			strcpy ( buffer , getLineString.c_str() );
+			n = write(sockfd,buffer,strlen(buffer));
+			if (n < 0) 
+				error("ERROR writing to socket");
+			bzero(buffer,2560);
+			n = read(sockfd,buffer,2559);
+			if (n < 0) 
+				error("ERROR reading from socket");
+			printf("%s\n",buffer);
+			flagGetAll = true;
+		}
+	}
+	if (!flagGetAll)
+		printf("%s\n",buffer);
 	
 	close(sockfd);
 	return 0;

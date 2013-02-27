@@ -23,14 +23,19 @@
 #define updateFailAdd "Could not update event as adding this event failed\n"
 #define updateFailNoExists "Entry does not exist, so cannot be updated\n"
 
-#define queryInvalid "Failed to modify your calendar: Invalid operation specified.\nOnly 'add', 'remove', 'update' and 'get' are supported\n"
-#define queryPass "Your query was successfully completed and the changes have been made.\n"
+#define queryInvalid "Failed to modify your calendar: Invalid operation specified.\nOnly 'add', 'remove', 'update' , 'get' and 'getall' are supported\n"
+#define queryPass "Your query was successfully completed.\n"
 #define queryFail "Your operation could not be completed because of the error described above ^.\n Please check and try again.\n"
 
 #define wrongUsageGet "ERROR: Invalid query. Usage is either of the two forms:\n1. username get eventDate\n2. username get eventDate eventStartTime\n"
 #define getSuccess "The event is as shown above\n"
 #define getFail "Your request to get the events has failed\n"
 #define getNoEntry "There is no entry corresponding to this date and time\n"
+
+#define totalLines " number of events are present for this user\n"
+#define getLineSuccess "Event Number "
+#define getLineWrongLine "The client sent a request for getting an event that doesn't exist\n"
+#define wrongUsageGetLine "The client sent a wrong format of request to get the nth line.\n"
 /*
  * Defining folder name to store all user files
  */

@@ -454,14 +454,67 @@ string updateEvent ( string fileName, vector<std::string> operation )
 	fpCal.close();
 	return (returnString);
 }
-/*
-string getLine ( string fileName, int lineNum )
+string findNumLines ( string fileName )
 {
+	string returnString = "";
+	ifstream fpCal;
+	fpCal.open( strdup(fileName.c_str()) );
+	if (!fpCal.is_open()){
+		returnString = returnString + fopenError;
+		return returnString;
+	}
+	/*
+	 * Now count the number of lines here
+	 */
+	int numLines = 0;
+	string oneLine;
+	while ( getline (fpCal,oneLine) ){
+		if ( oneLine.find(" ") == 0 )
+			continue;
+		numLines++;
+	}
+	fpCal.close();
+	stringstream ss;
+	ss<<numLines;
+	returnString = ss.str() + totalLines;
+	return ( returnString );
 }
-string totalLines ( string fileName )
+string getLine ( string fileName, vector<std::string> operation )
 {
+	string returnString = "";
+	if (operation.size() != 2 ){
+		returnString = returnString + wrongUsageGetLine;
+		return returnString;
+	}
+
+	ifstream fpCal;
+	fpCal.open( strdup(fileName.c_str()) );
+	if (!fpCal.is_open()){
+		returnString = returnString + fopenError;
+		return returnString;
+	}
+	int numLines = atoi(findNumLines ( fileName ).c_str());
+	int lineNum = atoi(operation[1].c_str());
+	if (numLines < lineNum ){
+		returnString = returnString + getLineWrongLine;
+		return (returnString);
+	}
+	int i = 1;
+	string oneLine;
+	while ( i<=lineNum && getline (fpCal,oneLine) ){
+		if ( oneLine.find(" ") == 0 )
+			continue;
+		if ( i == lineNum ){
+			returnString = returnString + oneLine;
+			break;
+		}
+		i++;
+	}
+	fpCal.close();
+	returnString = getLineSuccess + operation[1] + ":\t " + returnString + "\n";
+	return returnString;
 }
-*/
+
 /*
  * This is the function that takes in the entire query and splits the
  * query and appropriately calls required operator function
@@ -488,16 +541,20 @@ string execQuery( string query )
 		result = updateEvent( fileName, splitQuery );
 	if ( !operation.compare("get"))
 		result = getEvent( fileName, splitQuery );
+	if ( !operation.compare("getall"))
+		result = findNumLines( fileName );
+	if ( !operation.compare("getLine") )
+		result = getLine ( fileName, splitQuery );
 	
 	if ( result == "-1" ){
 		result = queryInvalid;
 		return result;
 	}
-	if ( string::npos != result.find(addSuccess) || string::npos != result.find(removeSuccess) || string::npos != result.find(updateSuccess) || string::npos != result.find(getSuccess) )
+	if ( string::npos != result.find(addSuccess) || string::npos != result.find(removeSuccess) || string::npos != result.find(updateSuccess) || string::npos != result.find(getSuccess)
+							|| string::npos != result.find(totalLines) || string::npos != result.find(getLineSuccess))
 		result = result + queryPass;
 	else
 		result = result + queryFail;
-	
 	return (result);
 }
 /*
